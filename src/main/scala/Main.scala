@@ -1,48 +1,7 @@
 
+import classification._
+import spectral._
 import java.awt.Color
-import java.awt.image.{Raster, BufferedImage}
-import java.io.File
-import javax.imageio.ImageIO
-
-trait SpectralImage {
-  type Spectrum = Int
-  type Illumination = Byte
-
-  def width: Int
-  def height: Int
-  def depth: Int
-  def pixelAt(x: Int, y: Int, lambda: Spectrum): Illumination
-
-  // we could pick at most 3 spectra to visualize as RGB image
-  def saveAsPng(path: String, s: (Spectrum, Spectrum, Spectrum)): Unit = {
-    val img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
-    for(i <- 0 until width; j <- 0 until height) {
-      val rgb = pixelAt(i, j, s._1) << 16 | pixelAt(i, j, s._2) << 8 | pixelAt(i, j, s._3)
-      img.setRGB(i, j, rgb)
-    }
-    ImageIO.write(img, "png", new File(path))
-  }
-}
-
-abstract class ImageClassification {
-  type ClassificationValue
-  val image: SpectralImage
-  def determine(x: Int, y: Int): ClassificationValue
-  def renderAsRGBInt(value: ClassificationValue): Int
-
-  def saveAsPng(path: String) = {
-    val img = new BufferedImage(image.width, image.height, BufferedImage.TYPE_INT_RGB)
-    for(i <- 0 until image.width; j <- 0 until image.height) {
-      val classificationValue = determine(i, j)
-      img.setRGB(i, j, renderAsRGBInt(classificationValue))
-    }
-    ImageIO.write(img, "png", new File(path))
-  }
-}
-
-trait SpectralImageClassifier {
-  def classify(image: SpectralImage): ImageClassification
-}
 
 // simple concrete spectral image
 object SimpleImage extends SpectralImage {
