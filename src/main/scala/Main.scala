@@ -36,6 +36,6 @@ object SimpleTerrainClassifier extends SpectralImageClassifier {
 }
 
 object Main extends App {
-  SimpleImage.saveAsPng("image.png", (0,1,2))
-  SimpleTerrainClassifier.classify(SimpleImage).saveAsPng("image_classif.png")
+  SimpleImage.saveAsPng("resources/output/image.png", (0,1,2))
+  SimpleTerrainClassifier.classify(SimpleImage).saveAsPng("resources/output/image_classif.png")
 }
