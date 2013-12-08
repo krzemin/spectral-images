@@ -36,6 +36,29 @@ object SimpleTerrainClassifier extends SpectralImageClassifier {
 }
 
 object Main extends App {
+  // simple image and classifier usage
   SimpleImage.saveAsPng("resources/output/image.png", (0,1,2))
   SimpleTerrainClassifier.classify(SimpleImage).saveAsPng("resources/output/image_classif.png")
+
+
+  // usage of raw multiband image reader
+
+  val hdfImgFiles = List(
+     "L71002026_02620000703_B10.L1G"
+    ,"L71002026_02620000703_B20.L1G"
+    ,"L71002026_02620000703_B30.L1G"
+    ,"L71002026_02620000703_B40.L1G"
+    ,"L71002026_02620000703_B50.L1G"
+    ) map ("resources/input/L71002026_02620000703/" + _)
+
+  println("reading bands...")
+  val hdfImg = RawMultibandlImageReader.readImage(6476, 6000, hdfImgFiles)
+
+  println("writing PNG...")
+  hdfImg.saveAsPng("resources/output/hdfImg.png", (3,3,3))
+
+  println("classifying and writing...")
+
+  SimpleTerrainClassifier.classify(hdfImg).saveAsPng("resources/output/hdfImg_classif.png")
+
 }
