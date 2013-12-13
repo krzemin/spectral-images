@@ -1,6 +1,6 @@
 package evolutionary
 
-trait GeneticAlgorithm {
+trait EvolutionaryAlgorithm {
 
   type Individual
   type Population = List[Individual]
