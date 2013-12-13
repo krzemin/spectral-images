@@ -9,6 +9,7 @@ abstract class UnsupervisedSpectralClassifier(
     val params: EvolutionaryParameters,
     val maxK: Int)
   extends SpectralImageClassifier {
+  require(maxK >= 2)
 
   def fitness(individual: EvolutionaryAlgorithm#Individual, image: SpectralImage): Double
 
