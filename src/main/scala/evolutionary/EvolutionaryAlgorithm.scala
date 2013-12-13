@@ -1,30 +1,42 @@
 package evolutionary
 
-trait EvolutionaryAlgorithm {
+import scala.annotation.tailrec
 
-  type Individual
-  type Population = List[Individual]
-
+trait EvolutionaryParameters {
   val populationSize: Int
   val maxIterations: Int
   val crossoverPercentage: Double
   val mutationProbability: Double
+}
 
-  val crossover: Population => Population
-  val mutation: Population => Population
-  val fitness: Individual => Int
-  val randomPopulation: Int => Population
+abstract class EvolutionaryAlgorithm {
 
-  def evolution(): Population = {
-    def aux(n: Int, population: Population): Population = n match {
+  type Individual
+  type Population = List[Individual]
+
+  val parameters: EvolutionaryParameters
+  val crossover: Double => Population => Population
+  val mutation: Double => Population => Population
+  val randomIndividual: Individual
+
+  private def randomPopulation: Population =
+    ((1 to parameters.populationSize) map { case _ => randomIndividual }) toList
+
+  def runEvolution(): Population = {
+
+    val crossoverOp = crossover(parameters.crossoverPercentage)
+    val mutationOp = mutation(parameters.mutationProbability)
+
+    @tailrec
+    def evolutionAux(n: Int, population: Population): Population = n match {
       case 0 => population
       case n =>
-        val cxPopulation = crossover(population)
-        val mutPopulation = mutation(cxPopulation)
-        aux(n-1, mutPopulation)
+        val cxPopulation = crossoverOp(population)
+        val mutPopulation = mutationOp(cxPopulation)
+        evolutionAux(n-1, mutPopulation)
     }
 
-    aux(maxIterations, randomPopulation(populationSize))
+    evolutionAux(parameters.maxIterations, randomPopulation)
   }
 
 }
