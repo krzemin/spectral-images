@@ -12,7 +12,7 @@ trait SpectralImage {
   def width: Int
   def height: Int
   def depth: Int
-  def pixelAt(x: Int, y: Int, lambda: Spectrum): Illumination
+  def pixelAt(x: Int, y: Int, band: Spectrum): Illumination
 
   // we could pick at most 3 spectra to visualize as RGB image
   def saveAsPng(path: String, s: (Spectrum, Spectrum, Spectrum)): Unit = {
