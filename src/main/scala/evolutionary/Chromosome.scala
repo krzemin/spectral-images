@@ -1,5 +1,0 @@
-package evolutionary
-
-class Chromosome {
-	
-}
