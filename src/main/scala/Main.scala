@@ -1,5 +1,7 @@
 
 import classification._
+import evolutionary.{EvolutionaryParameters, UnsupervisedSpectralClassifier}
+import evolutionary.{KMI, XBI, DMI}
 import spectral._
 import java.awt.Color
 
@@ -40,7 +42,6 @@ object Main extends App {
   SimpleImage.saveAsPng("resources/output/image.png", (0,1,2))
   SimpleTerrainClassifier.classify(SimpleImage).saveAsPng("resources/output/image_classif.png")
 
-
   // usage of raw multiband image reader
 
   val hdfImgFiles = List(
@@ -59,6 +60,18 @@ object Main extends App {
 
   println("classifying and writing...")
 
-  SimpleTerrainClassifier.classify(hdfImg).saveAsPng("resources/output/hdfImg_classif.png")
+  //SimpleTerrainClassifier.classify(hdfImg).saveAsPng("resources/output/hdfImg_classif.png")
+
+  object Params extends EvolutionaryParameters {
+    val populationSize: Int = 30
+    val maxIterations: Int = 50
+    val crossoverPercentage: Double = 0.1
+    val mutationProbability: Double = 0.05
+  }
+
+  object KMIClassifier extends UnsupervisedSpectralClassifier(Params, 5) with KMI {}
+
+  val classification = KMIClassifier.classify(hdfImg)
+  classification.saveAsPng("resources/output/hdfImg_classif.png")
 
 }
