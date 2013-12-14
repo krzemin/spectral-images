@@ -11,8 +11,13 @@ abstract class UnsupervisedSpectralClassifier(
   extends SpectralImageClassifier {
   require(maxK >= 2)
 
-  def fitness(individual: EvolutionaryAlgorithm#Individual, image: SpectralImage): Double
-  def determineCluster(x: Int, y: Int, image: SpectralImage, individual: EvolutionaryAlgorithm#Individual): Int
+  type Individual = EvolutionaryAlgorithm#Individual
+  type Population = EvolutionaryAlgorithm#Population
+
+  def fitness(individual: Individual, image: SpectralImage): Double
+  def determineCluster(x: Int, y: Int, image: SpectralImage, individual: Individual): Int
+  def crossoverIndividuals(pair: (Individual, Individual)): (Individual, Individual)
+  def selection(population: Population, fitness: (Individual, SpectralImage) => Double): (Population, Population)
 
   private val rand: Random = new Random()
 
@@ -23,7 +28,7 @@ abstract class UnsupervisedSpectralClassifier(
 
       val parameters: EvolutionaryParameters = params
 
-      def randomCluster: Option[Array[Byte]] =
+      def randomCluster: Cluster =
         if (rand.nextBoolean()) None
         else Some((1 to image.depth).map(_ => rand.nextInt(Byte.MaxValue).toByte).toArray)
 
@@ -31,8 +36,16 @@ abstract class UnsupervisedSpectralClassifier(
         (1 to maxK).map(_ => randomCluster).toArray
 
       // TODO: implement some kind of crossover using fitness function
-      def crossover(crossoverPercentage: Double)(population: Population): Population = population
-
+      def crossover(crossoverPercentage: Double)(population: Population): Population = {
+        val (selected, rest) = selection(population, fitness)
+        val shuffled = rand.shuffle(selected)
+        val pairs = shuffled.grouped(2)
+        val cxSelected = pairs.map { case pair =>
+          val cxPair = crossoverIndividuals(pair(0), pair(1))
+          Array(cxPair._1, cxPair._2)
+        }
+        (cxSelected.flatten ++ rest).toArray
+      }
       // TODO: implement some kind of mutation
       def mutation(mutationProbability: Double)(population: Population): Population = population
     }
