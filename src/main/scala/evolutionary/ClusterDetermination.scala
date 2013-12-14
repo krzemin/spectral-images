@@ -14,13 +14,15 @@ trait ClusterDetermination {
         for (dim <- 0 until image.depth) {
           d += ((x: Int) => x * x)(image.pixelAt(x, y, dim) - cluster.get(dim))
         }
+        //println(argMin, min, "<->", id, d)
         argMin = if (min > d) {
+         
           min = d
           id
         } else {
           argMin
         }
-
+        
       }
       id += 1
     }
