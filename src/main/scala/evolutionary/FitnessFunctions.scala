@@ -25,7 +25,7 @@ trait XBI extends KMI{
     var id : Int = 0
     for(cluster <- individual){
       for(other <- individual){
-          if(other != cluster){
+          if(other != cluster && other.isDefined && cluster.isDefined){
 			  var d = 0.0;
 			  for(dim <-0 until image.depth){
 			    d += (((x : Int) => x*x)(other.get(dim) - cluster.get(dim)));
