@@ -20,6 +20,9 @@
  \renewcommand\numberline[1]{#1.\hskip0.7em}
 \makeatother
 
+% przerwy po akapitach
+\setlength{\parskip}{0.3cm}
+
 % tytuł
 \title{{\textbf{Unsupervised multispectral image classification with genetic algorithms}}}
 \author{Piotr Krzemiński \and Krzysztof Nowicki \and Radosław Warzocha}
@@ -92,7 +95,26 @@ child 1 : $[(100,100,100,100), -1, (5,25,125,255), -1, (1,99,18,77)]$\\
 child 2 : $[(34,97,160,20), (199,12,64,70), (63,0,49,50), (123,234,134,124), -1]$
 \end{center}
 
-\subsection{Fitness functions}
+% to będzie zmienione JEŚLI dodamy więcej funkcji
+\subsection{Fitness function}
+
+K-Means algorithm is one of deterministic algorithms, that given set of observation vectors (vectors of brightness of image pixels in our case) creates set of specified size containing centroids for those vectors. We can use it's way of 'rating' sets generated in each iteration as our fitness function.
+
+In K-Means algorithm each pixel is assigned to the closest cluster centroid. Our fitness function - K-Means Index (KMI) - will represent total variation of those assignments. KMI is computed as follows:
+
+\begin{center}
+$KMI = 1/\left( \sum\limits_{k=1}^K \sum\limits_{i=1}^N \mu_{ik} \parallel x_i - \nu_k \parallel^2 \right)$
+\end{center}
+
+\noindent where \\ $K$ is the number of clusters in chromosome, \\ $N$ is number of pixels in the image, \\ $\mu_{ik}$ is membership function of pixel $X_i$ belonging to the $k^{th}$ cluster and \\ $\nu_k = \frac{\sum\limits_{i=1}^N \mu_{ik} x_i}{\sum\limits_{i=1}^N \mu_{ik}}$ is average value of pixels in $k^{th}$ cluster.
+
+\vspace{0.5cm}
+
+Other fitness function we can use is Xie-Beni's Index (XBI) which is not very different from KMI. Again, each pixel is assigned to the nearest cluster centroid. Then, however, we take $d_{min}$ to be minimum distance between any two of chromosome's centroids. Finally, XBI value is calculated:
+
+\begin{center}
+$XBI = N \cdot d_{min}^2 / KMI = N \cdot d_{min}^2 / \left( \sum\limits_{k=1}^K \sum\limits_{i=1}^N \mu_{ik} \parallel x_i - \nu_k \parallel^2 \right)$
+\end{center}
 
 \section{Results of experiments}
 \end{document} 
