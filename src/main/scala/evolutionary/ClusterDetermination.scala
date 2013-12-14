@@ -10,7 +10,7 @@ trait ClusterDetermination {
     var id : Int = 0
     for(cluster <- individual){
 	  var d = 0.0;
-	  for(dim <-0 to image.depth){
+	  for(dim <-0 until image.depth){
 	    d += (((x : Int) => x*x)(image.pixelAt(x, y, dim) - cluster.get(dim)));
 	  }
       argMin = if(min > d){
