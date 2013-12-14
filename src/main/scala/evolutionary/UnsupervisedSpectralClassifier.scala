@@ -12,6 +12,7 @@ abstract class UnsupervisedSpectralClassifier(
   require(maxK >= 2)
 
   def fitness(individual: EvolutionaryAlgorithm#Individual, image: SpectralImage): Double
+  def determineCluster(x: Int, y: Int, image: SpectralImage, individual: EvolutionaryAlgorithm#Individual): Int
 
   private val rand: Random = new Random()
 
@@ -40,7 +41,7 @@ abstract class UnsupervisedSpectralClassifier(
     }
 
     // here we run our evolutionary algorithm
-    val finalPopulation = algorithm.runEvolution()
+    val finalPopulation: EvolutionaryAlgorithm#Population = algorithm.runEvolution()
 
     new ImageClassification {
       type ClassificationValue = Int
@@ -48,7 +49,8 @@ abstract class UnsupervisedSpectralClassifier(
       val image: SpectralImage = img
 
       // TODO: determine classification value of (x,y) pixel of image based on finalPopulation
-      def determine(x: Int, y: Int): ClassificationValue = 0
+      def determine(x: Int, y: Int): ClassificationValue =
+        determineCluster(x, y, image, finalPopulation.head)
 
       def renderAsRGBInt(value: ClassificationValue): Int =
         value * Color.BLUE.getRGB / maxK

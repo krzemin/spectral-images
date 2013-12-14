@@ -1,7 +1,6 @@
 
 import classification._
-import evolutionary.{EvolutionaryParameters, UnsupervisedSpectralClassifier}
-import evolutionary.{KMI, XBI, DMI}
+import evolutionary._
 import spectral._
 import java.awt.Color
 
@@ -56,7 +55,7 @@ object Main extends App {
   val hdfImg = RawMultibandlImageReader.readImage(6476, 6000, hdfImgFiles)
 
   println("writing PNG...")
-  hdfImg.saveAsPng("resources/output/hdfImg.png", (3,3,3))
+  hdfImg.saveAsPng("resources/output/hdfImg.png", (1,3,4))
 
   println("classifying and writing...")
 
@@ -69,7 +68,11 @@ object Main extends App {
     val mutationProbability: Double = 0.05
   }
 
-  object KMIClassifier extends UnsupervisedSpectralClassifier(Params, 5) with KMI {}
+  object KMIClassifier
+    extends UnsupervisedSpectralClassifier(Params, 5)
+    with KMI
+    with ClusterDetermination
+  {}
 
   val classification = KMIClassifier.classify(hdfImg)
   classification.saveAsPng("resources/output/hdfImg_classif.png")
