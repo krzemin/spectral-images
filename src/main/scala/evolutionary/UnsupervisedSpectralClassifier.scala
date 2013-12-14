@@ -50,8 +50,17 @@ abstract class UnsupervisedSpectralClassifier(
         cxSelected.flatten.toArray
       }
 
-      // TODO: implement some kind of mutation
-      def mutation(mutationProbability: Double)(population: Population): Population = population
+      def mutation(mutationProbability: Double)(population: Population): Population = {
+        def mutate(individual: Individual): Individual = {
+          val r = rand.nextInt(individual.size)
+          individual.updated(r, randomCluster)
+        }
+
+        population.map(individual =>
+          if (rand.nextDouble() < mutationProbability) individual
+          else mutate(individual)
+        )
+      }
     }
 
     // here we run our evolutionary algorithm
