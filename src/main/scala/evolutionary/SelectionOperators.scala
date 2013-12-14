@@ -25,9 +25,11 @@ object SelectionOperators {
       val gradesDistribution = calculateDistribution(grades)
       val gradesSum = grades.sum
       def randomIndividual: EvolutionaryAlgorithm#Individual = {
-        // TODO: implement it
+        // TODO: improve performance with binary search algorithm
         val r = rand.nextDouble() * gradesSum
-        population.head
+        var idx = 0
+        while (gradesDistribution(idx) < r) { idx += 1 }
+        population(idx)
       }
 
       ((1 to population.size) map (_ => randomIndividual)).toArray
