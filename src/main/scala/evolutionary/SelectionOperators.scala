@@ -11,7 +11,7 @@ trait SelectionOperator {
 object SelectionOperators {
 
   private def calculateDistribution(items: Array[Double]): Array[Double] = {
-    val buffer: ArraySeq[Double] = ArraySeq(items.size)
+    val buffer: ArraySeq[Double] = ArraySeq.fill(items.size)(0)
     buffer(0) = items.head
     for(i <- 1 until items.size) {
       buffer(i) = buffer(i - 1) + items(i)
