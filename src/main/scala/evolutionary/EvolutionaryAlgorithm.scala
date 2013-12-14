@@ -11,8 +11,9 @@ trait EvolutionaryParameters {
 
 abstract class EvolutionaryAlgorithm {
 
-  type Individual
-  type Population = List[Individual]
+  type Cluster = Option[Array[Byte]]
+  type Individual = Array[Cluster]
+  type Population = Array[Individual]
 
   val parameters: EvolutionaryParameters
   def crossover(crossoverPercentage: Double)(population: Population): Population
@@ -20,7 +21,7 @@ abstract class EvolutionaryAlgorithm {
   def randomIndividual: Individual
 
   private def randomPopulation: Population =
-    (1 to parameters.populationSize).map(_ => randomIndividual).toList
+    (1 to parameters.populationSize).map(_ => randomIndividual).toArray
 
   def runEvolution(): Population = {
 
