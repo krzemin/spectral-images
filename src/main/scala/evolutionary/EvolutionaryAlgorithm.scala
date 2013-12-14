@@ -11,7 +11,8 @@ trait EvolutionaryParameters {
 
 abstract class EvolutionaryAlgorithm {
 
-  type Individual
+  type Cluster = Option[Array[Byte]]
+  type Individual = Array[Cluster]
   type Population = List[Individual]
 
   val parameters: EvolutionaryParameters

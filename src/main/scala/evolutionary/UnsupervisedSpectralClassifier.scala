@@ -21,9 +21,6 @@ abstract class UnsupervisedSpectralClassifier(
 
     val algorithm = new EvolutionaryAlgorithm {
 
-      type Cluster = Option[Array[Byte]]
-      type Individual = Array[Cluster]
-
       val parameters: EvolutionaryParameters = params
 
       def randomCluster: Option[Array[Byte]] =

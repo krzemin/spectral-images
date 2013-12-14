@@ -71,7 +71,6 @@ object Main extends App {
   object KMIClassifier
     extends UnsupervisedSpectralClassifier(Params, 5)
     with KMI
-    with ClusterDetermination
   {}
 
   val classification = KMIClassifier.classify(hdfImg)
