@@ -20,9 +20,9 @@ trait ClusterDetermination {
 	      } else {
 	        argMin
 	      }
-	      id += 1;
+	      
 	    }
-      
+        id += 1;
     }
     argMin
     
