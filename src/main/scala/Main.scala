@@ -1,80 +1,54 @@
 
-import classification._
 import evolutionary._
 import spectral._
-import java.awt.Color
-
-// simple concrete spectral image
-object SimpleImage extends SpectralImage {
-  val width: Int = 1000
-  val height: Int = 500
-  val depth: Int = 3
-
-  def pixelAt(x: Int, y: Int, lambda: Spectrum): Illumination = {
-    require(0 <= x && x < width)
-    require(0 <= y && y < height)
-
-    lambda match {
-      case 0 => (y % Byte.MaxValue).toByte
-      case 1 => ((x ^ y) % Byte.MaxValue / 2).toByte
-      case 2 => 0.toByte // (x % Byte.MaxValue).toByte
-    }
-  }
-}
-
-// simple (concrete) terrain classifier for spectral images
-object SimpleTerrainClassifier extends SpectralImageClassifier {
-  def classify(img: SpectralImage): ImageClassification = new ImageClassification {
-    type ClassificationValue = Boolean
-    val image = img
-    def determine(x: Int, y: Int) =
-      img.pixelAt(x, y, 1) >= 50 || img.pixelAt(x, y, 0) < 20
-    def renderAsRGBInt(value: ClassificationValue): Int = value match {
-      case true => Color.GREEN.getRGB
-      case _ => Color.BLUE.getRGB
-    }
-  }
-}
 
 object Main extends App {
-  // simple image and classifier usage
-  SimpleImage.saveAsPng("resources/output/image.png", (0,1,2))
-  SimpleTerrainClassifier.classify(SimpleImage).saveAsPng("resources/output/image_classif.png")
 
   // usage of raw multiband image reader
 
+//  val hdfImgFiles = List(
+//     "L71002026_02620000703_B10.L1G"
+//    ,"L71002026_02620000703_B20.L1G"
+//    ,"L71002026_02620000703_B30.L1G"
+//    ,"L71002026_02620000703_B40.L1G"
+//    ,"L71002026_02620000703_B50.L1G"
+//    ) map ("resources/input/L71002026_02620000703/" + _)
+//  val (width, height) = (6476, 6000)
+
+
   val hdfImgFiles = List(
-     "L71002026_02620000703_B10.L1G"
-    ,"L71002026_02620000703_B20.L1G"
-    ,"L71002026_02620000703_B30.L1G"
-    ,"L71002026_02620000703_B40.L1G"
-    ,"L71002026_02620000703_B50.L1G"
-    ) map ("resources/input/L71002026_02620000703/" + _)
+    "L71045025_02520000716_B10.L1G"
+    ,"L71045025_02520000716_B20.L1G"
+    ,"L71045025_02520000716_B30.L1G"
+    ,"L71045025_02520000716_B40.L1G"
+    ,"L71045025_02520000716_B50.L1G"
+  ) map ("resources/input/L71045025_02520000716/" + _)
+  val (width, height) = (6454, 6002)
 
   println("reading bands...")
-  val hdfImg = RawMultibandlImageReader.readImage(6476, 6000, hdfImgFiles)
+  val hdfImg = RawMultibandlImageReader.readImage(width, height, hdfImgFiles)
 
-//  println("writing PNG...")
-//  hdfImg.saveAsPng("resources/output/hdfImg.png", (1,3,4))
+  println("writing PNG...")
+  hdfImg.saveAsPng("resources/output/hdfImg.png", (1,3,4))
 
   println("cropping image...")
   val hdfImgCropped = new CroppedSpectralImage(hdfImg, 1000, 1000, 2000, 1500)
   hdfImgCropped.saveAsPng("resources/output/hdfImgCropped.png", (1,3,4))
 
 
-  println("classifying and writing...")
+  println("classifying...")
 
   //SimpleTerrainClassifier.classify(hdfImg).saveAsPng("resources/output/hdfImg_classif.png")
 
   object Params extends EvolutionaryParameters {
-    val populationSize: Int = 10
-    val maxIterations: Int = 5
-    val crossoverPercentage: Double = 0.1
-    val mutationProbability: Double = 0.05
+    val populationSize: Int = 20
+    val maxIterations: Int = 10
+    val crossoverPercentage: Double = 0.15
+    val mutationProbability: Double = 0.2
   }
 
   object KMIClassifier
-    extends UnsupervisedSpectralClassifier(Params, 5, 0.2)
+    extends UnsupervisedSpectralClassifier(Params, 4, 0.3)
     with KMI
     with SelectionOperators.RouletteWheel
     with CrossoverOperators.OnePointCrossover

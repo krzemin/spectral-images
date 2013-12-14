@@ -5,6 +5,8 @@ import spectral.SpectralImage
 import scala.util.Random
 import java.awt.Color
 
+import scala.collection.parallel._
+
 abstract class UnsupervisedSpectralClassifier(
     val params: EvolutionaryParameters,
     val maxK: Int,
@@ -69,6 +71,9 @@ abstract class UnsupervisedSpectralClassifier(
 
     val bestIndividual = finalPopulation.maxBy(fitness(image))
 
+    val classes = bestIndividual.count(_.isDefined)
+    println(s"total number of classes: $classes")
+
     new ImageClassification {
       type ClassificationValue = Int
 
@@ -77,9 +82,17 @@ abstract class UnsupervisedSpectralClassifier(
       def determine(x: Int, y: Int): ClassificationValue =
         determineCluster(x, y, image, bestIndividual)
 
-      def renderAsRGBInt(value: ClassificationValue): Int =
-        value * Color.RED.getRGB / maxK
-
+      def renderAsRGBInt(value: ClassificationValue): Int = value match {
+        case 0 => Color.GREEN.getRGB
+        case 1 => Color.YELLOW.getRGB
+        case 2 => Color.BLUE.getRGB
+        case 3 => Color.PINK.getRGB
+        case 4 => Color.GRAY.getRGB
+        case 5 => Color.ORANGE.getRGB
+        case 6 => Color.MAGENTA.getRGB
+        case 7 => Color.BLACK.getRGB
+        case v => v * Color.RED.getRGB / maxK
+      }
     }
   }
 }
