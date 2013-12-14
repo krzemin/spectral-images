@@ -59,8 +59,7 @@ abstract class UnsupervisedSpectralClassifier(
     // here we run our evolutionary algorithm
     val finalPopulation: EvolutionaryAlgorithm#Population = algorithm.runEvolution()
 
-    // TODO: select best individual according to fitness function
-    val bestIndividual = finalPopulation.head
+    val bestIndividual = finalPopulation.maxBy(fitness(image))
 
     new ImageClassification {
       type ClassificationValue = Int
