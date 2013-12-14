@@ -22,12 +22,17 @@ object SelectionOperators {
 
   trait RouletteWheel extends SelectionOperator {
     def selection(population: EvolutionaryAlgorithm#Population, fitness: EvolutionaryAlgorithm#Individual => Double, rand: Random): EvolutionaryAlgorithm#Population = {
-      val grades = population.map(fitness)
-      val gradesDistribution = calculateDistribution(grades)
-      val gradesSum = grades.sum
+      val grades: Array[Double] = population.map(fitness)
+      val gradesDistribution: Array[Double] = calculateDistribution(grades)
       def randomIndividual: EvolutionaryAlgorithm#Individual = {
         // TODO: improve performance with binary search algorithm
-        val r = rand.nextDouble() * gradesSum
+        val r = rand.nextDouble() * gradesDistribution.last
+
+//        val idx = java.util.Arrays.binarySearch(
+//          gradesDistribution, 0, grades.size - 1, new java.util.Comparator[Double] {
+//            def compare(p1: Double, p2: Double): Int = p1.compareTo(r)
+//          })
+
         var idx = 0
         while (gradesDistribution(idx) < r) { idx += 1 }
         population(idx)

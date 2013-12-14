@@ -30,7 +30,9 @@ abstract class EvolutionaryAlgorithm {
 
     @tailrec
     def evolutionAux(n: Int, population: Population): Population = n match {
-      case 0 => population
+      case 0 =>
+        println("evolution finished")
+        population
       case _ =>
         println(s"iteration number $n")
         val cxPopulation = crossoverOp(population)
