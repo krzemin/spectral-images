@@ -31,7 +31,7 @@ abstract class EvolutionaryAlgorithm {
     @tailrec
     def evolutionAux(n: Int, population: Population): Population = n match {
       case 0 => population
-      case n =>
+      case _ =>
         println(s"iteration number $n")
         val cxPopulation = crossoverOp(population)
         val mutPopulation = mutationOp(cxPopulation)

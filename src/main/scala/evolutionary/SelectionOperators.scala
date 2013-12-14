@@ -2,6 +2,7 @@ package evolutionary
 
 import scala.collection.mutable.ArraySeq
 import scala.util.Random
+import scala.collection.mutable
 
 trait SelectionOperator {
 
@@ -11,7 +12,7 @@ trait SelectionOperator {
 object SelectionOperators {
 
   private def calculateDistribution(items: Array[Double]): Array[Double] = {
-    val buffer: ArraySeq[Double] = ArraySeq.fill(items.size)(0)
+    val buffer: ArraySeq[Double] = mutable.ArraySeq.fill(items.size)(0)
     buffer(0) = items.head
     for(i <- 1 until items.size) {
       buffer(i) = buffer(i - 1) + items(i)
@@ -21,7 +22,7 @@ object SelectionOperators {
 
   trait RouletteWheel extends SelectionOperator {
     def selection(population: EvolutionaryAlgorithm#Population, fitness: EvolutionaryAlgorithm#Individual => Double, rand: Random): EvolutionaryAlgorithm#Population = {
-      val grades = population.map(fitness(_))
+      val grades = population.map(fitness)
       val gradesDistribution = calculateDistribution(grades)
       val gradesSum = grades.sum
       def randomIndividual: EvolutionaryAlgorithm#Individual = {

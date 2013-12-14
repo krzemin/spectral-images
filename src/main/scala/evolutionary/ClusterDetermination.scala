@@ -10,9 +10,9 @@ trait ClusterDetermination {
     var id: Int = 0
     for (cluster <- individual) {
       if (cluster.nonEmpty) {
-        var d = 0.0;
+        var d = 0.0
         for (dim <- 0 until image.depth) {
-          d += (((x: Int) => x * x)(image.pixelAt(x, y, dim) - cluster.get(dim)));
+          d += ((x: Int) => x * x)(image.pixelAt(x, y, dim) - cluster.get(dim))
         }
         argMin = if (min > d) {
           min = d
@@ -22,7 +22,7 @@ trait ClusterDetermination {
         }
 
       }
-      id += 1;
+      id += 1
     }
     argMin
   }
