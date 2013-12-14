@@ -78,7 +78,7 @@ abstract class UnsupervisedSpectralClassifier(
         determineCluster(x, y, image, bestIndividual)
 
       def renderAsRGBInt(value: ClassificationValue): Int =
-        value * Color.BLUE.getRGB / maxK
+        value * Color.RED.getRGB / maxK
 
     }
   }

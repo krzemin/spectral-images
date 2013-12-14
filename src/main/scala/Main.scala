@@ -54,8 +54,8 @@ object Main extends App {
   println("reading bands...")
   val hdfImg = RawMultibandlImageReader.readImage(6476, 6000, hdfImgFiles)
 
-  println("writing PNG...")
-  hdfImg.saveAsPng("resources/output/hdfImg.png", (1,3,4))
+//  println("writing PNG...")
+//  hdfImg.saveAsPng("resources/output/hdfImg.png", (1,3,4))
 
   println("cropping image...")
   val hdfImgCropped = new CroppedSpectralImage(hdfImg, 1000, 1000, 2000, 1500)
@@ -67,8 +67,8 @@ object Main extends App {
   //SimpleTerrainClassifier.classify(hdfImg).saveAsPng("resources/output/hdfImg_classif.png")
 
   object Params extends EvolutionaryParameters {
-    val populationSize: Int = 30
-    val maxIterations: Int = 50
+    val populationSize: Int = 10
+    val maxIterations: Int = 5
     val crossoverPercentage: Double = 0.1
     val mutationProbability: Double = 0.05
   }
@@ -80,7 +80,9 @@ object Main extends App {
     with CrossoverOperators.OnePointCrossover
   {}
 
-  val classification = KMIClassifier.classify(hdfImg)
-  classification.saveAsPng("resources/output/hdfImg_classif.png")
+  val classification = KMIClassifier.classify(hdfImgCropped)
+
+  println("saving classification as PNG")
+  classification.saveAsPng("resources/output/hdfImgCropped_classif.png")
 
 }
