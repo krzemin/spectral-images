@@ -6,18 +6,18 @@ import scala.math.sqrt
 trait KMI extends ClusterDetermination {
   def fitness(image: SpectralImage)(individual: EvolutionaryAlgorithm#Individual): Double = {
     var ret: Double = 0.0
-    for (x <- 0 until image.width) {
-      for (y <- 0 until image.height) {
-        val tmp = individual(determineCluster(x, y, image, individual))
-        if(tmp.isEmpty){
-          return 0.0;
-        } else {
-	      var d = 0.0
-	      for (dim <- 0 until image.depth) {
-	        d += ((x: Int) => x * x)(image.pixelAt(x, y, dim) - tmp.get(dim))
-	      }
-	      ret += sqrt(d)
+    for (x <- 0 until image.width;
+         y <- 0 until image.height) {
+      val tmp = individual(determineCluster(x, y, image, individual))
+      if (tmp.isEmpty) {
+        return 0.0;
+      } else {
+        var d = 0.0
+        for (dim <- 0 until image.depth) {
+          val t = image.pixelAt(x, y, dim) - tmp.get(dim)
+          d += t * t
         }
+        ret += sqrt(d)
       }
     }
     1 / ret
