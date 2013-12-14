@@ -7,7 +7,8 @@ import java.awt.Color
 
 abstract class UnsupervisedSpectralClassifier(
     val params: EvolutionaryParameters,
-    val maxK: Int)
+    val maxK: Int,
+    val emptyClusterProbability: Double)
   extends SpectralImageClassifier {
   require(maxK >= 2)
 
@@ -29,7 +30,7 @@ abstract class UnsupervisedSpectralClassifier(
       val parameters: EvolutionaryParameters = params
 
       def randomCluster: Cluster =
-        if (rand.nextBoolean()) None
+        if (rand.nextDouble() < emptyClusterProbability) None
         else Some((1 to image.depth).map(_ => rand.nextInt(Byte.MaxValue).toByte).toArray)
 
       def randomIndividual: Individual =

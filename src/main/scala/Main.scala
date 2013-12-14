@@ -74,7 +74,7 @@ object Main extends App {
   }
 
   object KMIClassifier
-    extends UnsupervisedSpectralClassifier(Params, 5)
+    extends UnsupervisedSpectralClassifier(Params, 5, 0.2)
     with KMI
     with SelectionOperators.RouletteWheel
     with CrossoverOperators.OnePointCrossover
