@@ -1,0 +1,98 @@
+\documentclass[11pt,leqno]{article}
+
+\usepackage[utf8]{inputenc}  
+\usepackage[T1]{fontenc}
+
+\usepackage{a4wide}
+\usepackage{indentfirst}
+
+\usepackage{graphicx}
+\usepackage{scrextend}
+
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{bbm}
+
+\usepackage{multirow}
+
+% kropki po numerach paragrafów :)
+\makeatletter
+ \renewcommand\@seccntformat[1]{\csname the#1\endcsname.\quad}
+ \renewcommand\numberline[1]{#1.\hskip0.7em}
+\makeatother
+
+% tytuł
+\title{{\textbf{Unsupervised multispectral image classification with genetic algorithms}}}
+\author{Piotr Krzemiński \and Krzysztof Nowicki \and Radosław Warzocha}
+\date{Wrocław, \today}
+
+% środowiska do twierdzeń i dowodów
+\renewenvironment{proof}{\noindent \textbf{\underline{\textsc{Dowód}}} \newline}{\begin{flushright}$\square$\end{flushright}}
+
+\newtheoremstyle{mytheoremstyle}
+  {}{}{}{}
+  {\scshape}	% name of head font
+  {\newline}	% punctuation between head and body
+  {0em}			% space after theorem head; " " = normal interword space
+  {}
+\theoremstyle{mytheoremstyle}
+\newtheorem*{theorem}{\noindent \textbf{\underline{Twierdzenie}}}
+
+\theoremstyle{mytheoremstyle}
+\newtheorem*{mydefinition}{\noindent \textbf{\underline{\textsc{Definicja}}}}
+
+% POCZĄTEK DOKUMENTU
+\begin{document}
+\maketitle
+\thispagestyle{empty}
+
+\section{Introduction}
+
+Multi-spectral image classification is important procedure in remote sensing. Supervised classification requires a human analyst to provide training data for algorithm in order to infer the classifier. On the other as amount of data we get from satellitar imaging devices grows, so grows need for unsupervised classification, which requires almost no human work. Main problem of this algorithms is that they need to know in advance how many different clusters (we can think of them as 'types of terrain', like water, forest, field etc.) will there be on the picture, and this value is usually not known a priori. In this paper we present results of applying some genetic algorithms to this problem.
+
+To test our work we used Landsat 7 multispectral images, containing data for 5  bands - from visible green to mid infrared. All the software was developed using Scala programming language and is attached to this report.
+
+\section{Definition of the problem and proposed solution}
+
+\subsection{Chromosome representation}
+
+Our chromosome should be set of potential cluster centroids in multi-spectral space. Set size (length of the chromosome) will be selected form range $[K_{min}, K_{max}]$ where $K_{min}$ should be usually equal 2 (unless some special case is considered) and $K_{max}$ must be selected manually according to experience. Each gene in the set will represent centroid, so it will be point in $[0,255]^B$, where B is number of bands in our image. In our implementation chromosomes are collection of such points and length $K_{max}$, but every gene can also be equal to $-1$ and represent invalid (non-existent) centroid. So for example individual
+
+\begin{center}
+$[(100,100,100,100), -1, (5,25,125,255), (123,234,134,124), -1]$
+\end{center}
+
+\noindent represents 3 centroids in four-dimentional multi-spectral space  .
+
+\subsection{Mutation, crossover and selection}
+
+We decided to use standard well-known operators of mutation, crossover and \textit{roulette wheel} selection. 
+
+Mutation will be applied with certain low probability to some genes, producing completely new random centroid in place of the mutated one. So for example we can have individual
+
+\begin{center}
+$[(100,100,100,100), -1, (5,25,125,255), (123,234,134,124), -1]$
+\end{center}
+
+\noindent which after mutation of the second gene can become
+
+\begin{center}
+$[(100,100,100,100), (50, 75, 125, 200), (5,25,125,255), (123,234,134,124), -1]$
+\end{center}
+
+Crossover shall pick random natural number $k$ between 0 and $K_{max}$, divide each of two chromosomes into two parts: first of length $k$ and second of length $K_{max} - k$ and finally switch the second part of the chromosomes. So for example
+
+\begin{center}
+parent 1 : $[(100,100,100,100), -1, (5,25,125,255), (123,234,134,124), -1]$\\
+parent 2 : $[(34,97,160,20), (199,12,64,70), (63,0,49,50), -1, (1,99,18,77)]$
+
+
+$\downarrow k = 3$
+
+child 1 : $[(100,100,100,100), -1, (5,25,125,255), -1, (1,99,18,77)]$\\
+child 2 : $[(34,97,160,20), (199,12,64,70), (63,0,49,50), (123,234,134,124), -1]$
+\end{center}
+
+\subsection{Fitness functions}
+
+\section{Results of experiments}
+\end{document} 
