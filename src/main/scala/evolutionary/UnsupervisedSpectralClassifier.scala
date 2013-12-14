@@ -17,9 +17,7 @@ abstract class UnsupervisedSpectralClassifier(
   def fitness(image: SpectralImage)(individual: Individual): Double
   def determineCluster(x: Int, y: Int, image: SpectralImage, individual: Individual): Int
   def selection(population: Population, fitness: Individual => Double, rand: Random): Population
-
-  // TODO: abstract it
-  def crossoverIndividuals(pair: (Individual, Individual)): (Individual, Individual) = pair
+  def crossoverIndividuals(pair: (Individual, Individual), rand: Random): (Individual, Individual)
 
   private val rand: Random = new Random()
 
@@ -43,7 +41,7 @@ abstract class UnsupervisedSpectralClassifier(
         val pairs = shuffled.grouped(2)
         val cxSelected = pairs.map { case pair =>
           if (rand.nextDouble() <= crossoverPercentage ) {
-            val cxPair = crossoverIndividuals(pair(0), pair(1))
+            val cxPair = crossoverIndividuals((pair(0), pair(1)), rand)
             Array(cxPair._1, cxPair._2)
           } else {
             pair

@@ -72,6 +72,7 @@ object Main extends App {
     extends UnsupervisedSpectralClassifier(Params, 5)
     with KMI
     with SelectionOperators.RouletteWheel
+    with CrossoverOperators.OnePointCrossover
   {}
 
   val classification = KMIClassifier.classify(hdfImg)
