@@ -68,8 +68,8 @@ abstract class UnsupervisedSpectralClassifier(
 
     // here we run our evolutionary algorithm
     val finalPopulation: EvolutionaryAlgorithm#Population = algorithm.runEvolution()
-
-    val bestIndividual = finalPopulation.maxBy(fitness(image))
+    val finalPopulationPar = scala.collection.parallel.mutable.ParArray.fromTraversables(finalPopulation)
+    val bestIndividual = finalPopulationPar.maxBy(fitness(image))
 
     val classes = bestIndividual.count(_.isDefined)
     println(s"total number of classes: $classes")

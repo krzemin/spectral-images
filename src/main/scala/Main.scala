@@ -54,7 +54,6 @@ object Main extends App {
     with CrossoverOperators.OnePointCrossover
   {}
 
-
   val t0 = System.nanoTime
   val classification = KMIClassifier.classify(hdfImgCropped)
   val t1 = System.nanoTime

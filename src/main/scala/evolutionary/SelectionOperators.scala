@@ -3,6 +3,8 @@ package evolutionary
 import scala.collection.mutable.ArraySeq
 import scala.util.Random
 import scala.collection.mutable
+import scala.collection.parallel
+import scala.collection.parallel.mutable.ParArray
 
 trait SelectionOperator {
 
@@ -22,7 +24,9 @@ object SelectionOperators {
 
   trait RouletteWheel extends SelectionOperator {
     def selection(population: EvolutionaryAlgorithm#Population, fitness: EvolutionaryAlgorithm#Individual => Double, rand: Random): EvolutionaryAlgorithm#Population = {
-      val grades: Array[Double] = population.map(fitness)
+      val populationPar = ParArray.fromTraversables(population)
+      val grades: Array[Double] = populationPar.map(fitness).toArray
+
       val gradesDistribution: Array[Double] = calculateDistribution(grades)
       def randomIndividual: EvolutionaryAlgorithm#Individual = {
         // TODO: improve performance with binary search algorithm
