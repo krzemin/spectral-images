@@ -20,7 +20,7 @@ trait KMI extends ClusterDetermination{
 }
 
 trait XBI extends KMI{
-  def fitness(individual: EvolutionaryAlgorithm#Individual, image: SpectralImage): Double = {
+  override def fitness(individual: EvolutionaryAlgorithm#Individual, image: SpectralImage): Double = {
     var min : Double = Double.MaxValue 
     var id : Int = 0
     for(cluster <- individual){
