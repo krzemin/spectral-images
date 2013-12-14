@@ -57,6 +57,11 @@ object Main extends App {
   println("writing PNG...")
   hdfImg.saveAsPng("resources/output/hdfImg.png", (1,3,4))
 
+  println("cropping image...")
+  val hdfImgCropped = new CroppedSpectralImage(hdfImg, 1000, 1000, 2000, 1500)
+  hdfImgCropped.saveAsPng("resources/output/hdfImgCropped.png", (1,3,4))
+
+
   println("classifying and writing...")
 
   //SimpleTerrainClassifier.classify(hdfImg).saveAsPng("resources/output/hdfImg_classif.png")
