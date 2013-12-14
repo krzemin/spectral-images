@@ -3,7 +3,7 @@ package evolutionary
 import spectral.SpectralImage
 import scala.math.sqrt
 trait KMI extends ClusterDetermination{
-  def fitness(individual: EvolutionaryAlgorithm#Individual, image: SpectralImage): Double = {
+  def fitness(image: SpectralImage)(individual: EvolutionaryAlgorithm#Individual): Double = {
     var ret : Double = 0.0;
     for(x <- 0 to image.height){
       for(y <- 0 to image.width){
@@ -20,7 +20,7 @@ trait KMI extends ClusterDetermination{
 }
 
 trait XBI extends KMI{
-  override def fitness(individual: EvolutionaryAlgorithm#Individual, image: SpectralImage): Double = {
+  override def fitness(image: SpectralImage)(individual: EvolutionaryAlgorithm#Individual): Double = {
     var min : Double = Double.MaxValue 
     var id : Int = 0
     for(cluster <- individual){
@@ -38,12 +38,12 @@ trait XBI extends KMI{
           }
       }
     } 
-    super.fitness(individual, image) * image.height * image.width * min
+    super.fitness(image)(individual) * image.height * image.width * min
   }
 }
 
 trait DBI {
-  def fitness(individual: EvolutionaryAlgorithm#Individual, image: SpectralImage): Double = {
+  def fitness(image: SpectralImage)(individual: EvolutionaryAlgorithm#Individual): Double = {
     0
   }
 }

@@ -14,10 +14,12 @@ abstract class UnsupervisedSpectralClassifier(
   type Individual = EvolutionaryAlgorithm#Individual
   type Population = EvolutionaryAlgorithm#Population
 
-  def fitness(individual: Individual, image: SpectralImage): Double
+  def fitness(image: SpectralImage)(individual: Individual): Double
   def determineCluster(x: Int, y: Int, image: SpectralImage, individual: Individual): Int
-  def crossoverIndividuals(pair: (Individual, Individual)): (Individual, Individual)
-  def selection(population: Population, fitness: (Individual, SpectralImage) => Double): (Population, Population)
+  def selection(population: Population, fitness: Individual => Double, rand: Random): Population
+
+  // TODO: abstract it
+  def crossoverIndividuals(pair: (Individual, Individual)): (Individual, Individual) = pair
 
   private val rand: Random = new Random()
 
@@ -36,14 +38,18 @@ abstract class UnsupervisedSpectralClassifier(
         (1 to maxK).map(_ => randomCluster).toArray
 
       def crossover(crossoverPercentage: Double)(population: Population): Population = {
-        val (selected, rest) = selection(population, fitness)
-        val shuffled = rand.shuffle(selected)
+        val selected: Population = selection(population, fitness(image), rand)
+        val shuffled: Population = rand.shuffle(selected.toSeq).toArray
         val pairs = shuffled.grouped(2)
         val cxSelected = pairs.map { case pair =>
-          val cxPair = crossoverIndividuals(pair(0), pair(1))
-          Array(cxPair._1, cxPair._2)
+          if (rand.nextDouble() <= crossoverPercentage ) {
+            val cxPair = crossoverIndividuals(pair(0), pair(1))
+            Array(cxPair._1, cxPair._2)
+          } else {
+            pair
+          }
         }
-        (cxSelected.flatten ++ rest).toArray
+        cxSelected.flatten.toArray
       }
 
       // TODO: implement some kind of mutation
