@@ -15,13 +15,15 @@ trait ClusterDetermination {
           val t = image.pixelAt(x, y, dim) - cluster.get(dim)
           d += t * t
         }
+        //println(argMin, min, "<->", id, d)
         argMin = if (min > d) {
+         
           min = d
           id
         } else {
           argMin
         }
-
+        
       }
       id += 1
     }
