@@ -35,7 +35,6 @@ abstract class UnsupervisedSpectralClassifier(
       def randomIndividual: Individual =
         (1 to maxK).map(_ => randomCluster).toArray
 
-      // TODO: implement some kind of crossover using fitness function
       def crossover(crossoverPercentage: Double)(population: Population): Population = {
         val (selected, rest) = selection(population, fitness)
         val shuffled = rand.shuffle(selected)
@@ -46,6 +45,7 @@ abstract class UnsupervisedSpectralClassifier(
         }
         (cxSelected.flatten ++ rest).toArray
       }
+
       // TODO: implement some kind of mutation
       def mutation(mutationProbability: Double)(population: Population): Population = population
     }
@@ -53,14 +53,16 @@ abstract class UnsupervisedSpectralClassifier(
     // here we run our evolutionary algorithm
     val finalPopulation: EvolutionaryAlgorithm#Population = algorithm.runEvolution()
 
+    // TODO: select best individual according to fitness function
+    val bestIndividual = finalPopulation.head
+
     new ImageClassification {
       type ClassificationValue = Int
 
       val image: SpectralImage = img
 
-      // TODO: determine classification value of (x,y) pixel of image based on finalPopulation
       def determine(x: Int, y: Int): ClassificationValue =
-        determineCluster(x, y, image, finalPopulation.head)
+        determineCluster(x, y, image, bestIndividual)
 
       def renderAsRGBInt(value: ClassificationValue): Int =
         value * Color.BLUE.getRGB / maxK
