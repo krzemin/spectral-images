@@ -25,7 +25,6 @@ trait ClusterDetermination {
         id += 1;
     }
     argMin
-    
   }
 		  
 }
