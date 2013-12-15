@@ -61,10 +61,10 @@ To test our work we used Landsat 7 multispectral images, containing data for 5  
 
 \subsection{Chromosome representation}
 
-Our chromosome should be set of potential cluster centroids in multi-spectral space. Set size (length of the chromosome) will be selected form range $[K_{min}, K_{max}]$ where $K_{min}$ should be usually equal 2 (unless some special case is considered) and $K_{max}$ must be selected manually according to experience. Each gene in the set will represent centroid, so it will be point in $[0,255]^B$, where B is number of bands in our image. In our implementation chromosomes are collection of such points and length $K_{max}$, but every gene can also be equal to $-1$ and represent invalid (non-existent) centroid. So for example individual
+Our chromosome should be set of potential cluster centroids in multi-spectral space. Set size (length of the chromosome) will be selected form range $[K_{min}, K_{max}]$ where $K_{min}$ should be usually equal 2 (unless some special case is considered) and $K_{max}$ must be selected manually according to experience. Each gene in the set will represent centroid, so it will be point in $[0,255]^B$, where B is number of bands in our image. In our implementation chromosomes are collection of such points and length $K_{max}$, but every gene can also be equal to \texttt{None} and represent invalid (non-existent) centroid. So for example individual
 
 \begin{center}
-$[(100,100,100,100), -1, (5,25,125,255), (123,234,134,124), -1]$
+$[(100,100,100,100), None, (5,25,125,255), (123,234,134,124), None]$
 \end{center}
 
 \noindent represents 3 centroids in four-dimentional multi-spectral space  .
@@ -76,26 +76,26 @@ We decided to use standard well-known operators of mutation, crossover and \text
 Mutation will be applied with certain low probability to some genes, producing completely new random centroid in place of the mutated one. So for example we can have individual
 
 \begin{center}
-$[(100,100,100,100), -1, (5,25,125,255), (123,234,134,124), -1]$
+$[(100,100,100,100), None, (5,25,125,255), (123,234,134,124), None]$
 \end{center}
 
 \noindent which after mutation of the second gene can become
 
 \begin{center}
-$[(100,100,100,100), (50, 75, 125, 200), (5,25,125,255), (123,234,134,124), -1]$
+$[(100,100,100,100), (50, 75, 125, 200), (5,25,125,255), (123,234,134,124), None]$
 \end{center}
 
 Crossover shall pick random natural number $k$ between 0 and $K_{max}$, divide each of two chromosomes into two parts: first of length $k$ and second of length $K_{max} - k$ and finally switch the second part of the chromosomes. So for example
 
 \begin{center}
-parent 1 : $[(100,100,100,100), -1, (5,25,125,255), (123,234,134,124), -1]$\\
-parent 2 : $[(34,97,160,20), (199,12,64,70), (63,0,49,50), -1, (1,99,18,77)]$
+parent 1 : $[(100,100,100,100), None, (5,25,125,255), (123,234,134,124), None]$\\
+parent 2 : $[(34,97,160,20), (199,12,64,70), (63,0,49,50), None, (1,99,18,77)]$
 
 
 $\downarrow k = 3$
 
-child 1 : $[(100,100,100,100), -1, (5,25,125,255), -1, (1,99,18,77)]$\\
-child 2 : $[(34,97,160,20), (199,12,64,70), (63,0,49,50), (123,234,134,124), -1]$
+child 1 : $[(100,100,100,100), None, (5,25,125,255), None, (1,99,18,77)]$\\
+child 2 : $[(34,97,160,20), (199,12,64,70), (63,0,49,50), (123,234,134,124), None]$
 \end{center}
 
 % to będzie zmienione JEŚLI dodamy więcej funkcji
@@ -131,4 +131,61 @@ where \\ $R_k = \max\limits_{j, j\neq k} \mathlarger{\left\lbrace \frac{S_k + S_
 We'll try each of this functions and see if there is one strictly better then the others.
 
 \section{Results of experiments}
+
+\subsection{Methods convergence}
+
+First thing we should do when trying to determine if our algorithm is good is methods convergence. To determine if and how fast is our method convergent we conducted simple test by running our program on small multi-spectral image and compared its output with hand-made classification of those data. Following figure shows compliance percentage of those two images.
+
+\begin{center}
+\begin{figure}
+
+\end{figure}
+\end{center}
+
+% Further blabling about the figure goes here
+
+\subsection{Tuning parameters}
+
+One of our main concerns was tuning the parameters of the algorithm. Not only do we have to tune standard ones: population size, mutation and crossover probabilities and iteration numbers, but also length of the chromosome and probability of non-existent centroid \texttt{None}. We decided that our main focus should be on the latter.
+
+First of all we conducted experiments, that showed, that mutation and crossover probability values equal $0.7$ and $0.05$ respectively were giving good results to conduct further experiments.
+
+Let's first understand why tuning length of the chromosome and probability of \texttt{None} (called also \textit{PN}) is important. During our experiments we have started with values 6 and 0.1 for those factors respectively. We have noticed that our population contained many individuals with none or very small amount of 'no centroid' genes. It's going to be a problem when we have simple image which contains not so many clusters. On the other hand, if we set PN to be high (like 0.6) we can loose some existing centroids in favor of \texttt{None}s (situation presented in the following figure).
+
+\begin{center}
+\begin{figure}
+
+\end{figure}
+\end{center}
+
+Our experiments showed that $PN$ value of ... gives most accurate results. We also suggest to set $K_{max}$ to value $\approx 12$ as we believe it is easier to merge clusters afterwards than to extract clusters that were unified by the algorithm.
+
+\subsection{Final results}
+
+After tuning parameters we can finally present results of our algorithm. First let's take a look at one of the original pictures we used to test the outcome.
+
+\begin{center}
+\begin{figure}
+
+\end{figure}
+\end{center}
+
+Following table shows the pictures that were the output of algorithm for different indexes and population sizes.
+
+\begin{center}
+\begin{figure}
+
+\end{figure}
+\end{center}
+
+% Wnioski z obrazków
+
+Finally it's important to measure the error between results and original image. It was done by manually classifying the original picture and then constructing \textit{error matrix}. Error percentage is shown in the table:
+
+\begin{table}
+\begin{tabular}{l|c|c|c|}
+
+\end{tabular}
+\end{table}
+
 \end{document} 
