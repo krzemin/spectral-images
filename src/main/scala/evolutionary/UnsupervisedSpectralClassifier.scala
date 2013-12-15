@@ -5,14 +5,12 @@ import spectral.SpectralImage
 import scala.util.Random
 import java.awt.Color
 
-import scala.collection.parallel._
-
 abstract class UnsupervisedSpectralClassifier(
     val params: EvolutionaryParameters,
-    val maxK: Int,
+    val maxClusters: Int,
     val emptyClusterProbability: Double)
   extends SpectralImageClassifier {
-  require(maxK >= 2)
+  require(maxClusters >= 2)
 
   type Individual = EvolutionaryAlgorithm#Individual
   type Population = EvolutionaryAlgorithm#Population
@@ -36,7 +34,7 @@ abstract class UnsupervisedSpectralClassifier(
         else Some((1 to image.depth).map(_ => rand.nextInt(Byte.MaxValue).toByte).toArray)
 
       def randomIndividual: Individual =
-        (1 to maxK).map(_ => randomCluster).toArray
+        (1 to maxClusters).map(_ => randomCluster).toArray
 
       def crossover(crossoverPercentage: Double)(population: Population): Population = {
         val selected: Population = selection(population, fitness(image), rand)
