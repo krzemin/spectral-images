@@ -26,8 +26,8 @@ object SelectionOperators {
     def selection(population: EvolutionaryAlgorithm#Population, fitness: EvolutionaryAlgorithm#Individual => Double, rand: Random): EvolutionaryAlgorithm#Population = {
       val populationPar = ParArray.fromTraversables(population)
       val grades: Array[Double] = populationPar.map(fitness).toArray
-
       val gradesDistribution: Array[Double] = calculateDistribution(grades)
+
       def randomIndividual: EvolutionaryAlgorithm#Individual = {
         // TODO: improve performance with binary search algorithm
         val r = rand.nextDouble() * gradesDistribution.last
@@ -42,7 +42,7 @@ object SelectionOperators {
         population(idx)
       }
 
-      ((1 to population.size) map (_ => randomIndividual)).toArray
+      ((1 to population.size).par.map (_ => randomIndividual)).toArray
     }
   }
 

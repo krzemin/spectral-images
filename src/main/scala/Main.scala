@@ -41,14 +41,14 @@ object Main extends App {
   //SimpleTerrainClassifier.classify(hdfImg).saveAsPng("resources/output/hdfImg_classif.png")
 
   object Params extends EvolutionaryParameters {
-    val populationSize: Int = 6 // must be even to proper crossover
+    val populationSize: Int = 20 // must be even to proper crossover
     val maxIterations: Int = 5
     val crossoverPercentage: Double = 0.1
     val mutationProbability: Double = 0.05
   }
 
   object KMIClassifier
-    extends UnsupervisedSpectralClassifier(Params, 4, 0.2)
+    extends UnsupervisedSpectralClassifier(Params, 6, 0.2)
     with KMI
     with SelectionOperators.RouletteWheel
     with CrossoverOperators.OnePointCrossover

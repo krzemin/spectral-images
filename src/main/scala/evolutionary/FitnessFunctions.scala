@@ -33,7 +33,8 @@ trait XBI extends KMI {
         if (other != cluster && other.isDefined && cluster.isDefined) {
           var d = 0.0
           for (dim <- 0 until image.depth) {
-            d += ((x: Int) => x * x)(other.get(dim) - cluster.get(dim))
+            val t = other.get(dim) - cluster.get(dim)
+            d += t * t
           }
           min = if (min > d) {
             d
