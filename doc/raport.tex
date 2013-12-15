@@ -6,6 +6,7 @@
 \usepackage{a4wide}
 \usepackage{indentfirst}
 
+\usepackage{relsize}
 \usepackage{graphicx}
 \usepackage{scrextend}
 
@@ -47,6 +48,8 @@
 \begin{document}
 \maketitle
 \thispagestyle{empty}
+
+\vspace{5cm}
 
 \section{Introduction}
 
@@ -106,15 +109,26 @@ In K-Means algorithm each pixel is assigned to the closest cluster centroid. Our
 $KMI = 1/\left( \sum\limits_{k=1}^K \sum\limits_{i=1}^N \mu_{ik} \parallel x_i - \nu_k \parallel^2 \right)$
 \end{center}
 
-\noindent where \\ $K$ is the number of clusters in chromosome, \\ $N$ is number of pixels in the image, \\ $\mu_{ik}$ is membership function of pixel $X_i$ belonging to the $k^{th}$ cluster and \\ $\nu_k = \frac{\sum\limits_{i=1}^N \mu_{ik} x_i}{\sum\limits_{i=1}^N \mu_{ik}}$ is average value of pixels in $k^{th}$ cluster.
+\noindent where \\ $K$ is the number of clusters in chromosome, \\ $N$ is number of pixels in the image, \\ $\mu_{ik}$ is membership function of pixel $X_i$ belonging to the $k^{th}$ cluster and \\ $\nu_k = \mathlarger{\frac{\sum\limits_{i=1}^N \mu_{ik} x_i}{\sum\limits_{i=1}^N \mu_{ik}}}$ is average value of pixels in $k^{th}$ cluster.
 
 \vspace{0.5cm}
 
-Other fitness function we can use is Xie-Beni's Index (XBI) which is not very different from KMI. Again, each pixel is assigned to the nearest cluster centroid. Then, however, we take $d_{min}$ to be minimum distance between any two of chromosome's centroids. Finally, XBI value is calculated:
+Other fitness function we can use is Xie-Beni's Index (XBI) which is not very different from KMI. Again, each pixel is assigned to the nearest cluster centroid. Then, however, we take $d_{min} = \min\limits_{k,j} \parallel \nu_k - \nu_j \parallel$ to be minimum distance between any two of . Finally, XBI value is calculated:
 
 \begin{center}
 $XBI = N \cdot d_{min}^2 / KMI = N \cdot d_{min}^2 / \left( \sum\limits_{k=1}^K \sum\limits_{i=1}^N \mu_{ik} \parallel x_i - \nu_k \parallel^2 \right)$
 \end{center}
+
+Our third choice is Davies-Boundin Index (DBI), which is similar to the previous index, only this time we're going to add standard deviation of the cluster.
+
+Let $S_k = \left( \frac{1}{M} \sum\limits_{x_i \in X_k} \parallel x_i - \nu_k \parallel^2 \right)^{1/2}$ be the standard deviation of $k^{th}$ cluster. Then
+
+\begin{center}
+$DBI = K / \sum\limits_{k = 1}^K R_k$
+
+where \\ $R_k = \max\limits_{j, j\neq k} \mathlarger{\left\lbrace \frac{S_k + S_j}{d_{kj}} \right\rbrace}$
+\end{center}
+We'll try each of this functions and see if there is one strictly better then the others.
 
 \section{Results of experiments}
 \end{document} 
