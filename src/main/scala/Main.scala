@@ -7,12 +7,8 @@ object Main extends App {
   // usage of raw multiband image reader
 
   val hdfImgFiles = List(
-     "L71002026_02620000703_B10.L1G"
-    ,"L71002026_02620000703_B20.L1G"
-    ,"L71002026_02620000703_B30.L1G"
-    ,"L71002026_02620000703_B40.L1G"
-    ,"L71002026_02620000703_B50.L1G"
-    ) map ("resources/input/L71002026_02620000703/" + _)
+     "B10","B20","B30","B40","B50"
+    ) map ("resources/input/L71002026_02620000703/L71002026_02620000703_" + _ + ".L1G")
   val (width, height) = (6476, 6000)
 
 
@@ -39,28 +35,37 @@ object Main extends App {
   println("classifying...")
 
   //SimpleTerrainClassifier.classify(hdfImg).saveAsPng("resources/output/hdfImg_classif.png")
-
-  object Params extends EvolutionaryParameters {
-    val populationSize: Int = 20 // must be even to proper crossover
-    val maxIterations: Int = 10
-    val crossoverPercentage: Double = 0.1
-    val mutationProbability: Double = 0.05
+  
+  val popSizes = List(30, 60, 100)
+  val coPrecentages = List(0.4, 0.6, 0.8)
+  val mutProbs = List(0.05, 0.25, 0.5)
+  def createEvolutionParams(params: ((Int,Double),Double)) = 
+                new EvolutionaryParameters {
+                    val populationSize: Int = params._1._1 // must be even to proper crossover
+                    val maxIterations: Int = 10
+                    val crossoverPercentage: Double = params._1._2
+                    val mutationProbability: Double = params._2
+                }
+  def createKMIClassifier(params: EvolutionaryParameters) =
+                new UnsupervisedSpectralClassifier(params, 6, 0.1)
+                    with KMI
+                    with SelectionOperators.RouletteWheel
+                    with CrossoverOperators.OnePointCrossover
+                {}
+  val evoParamsList = popSizes zip coPrecentages zip mutProbs map createEvolutionParams
+  val KMIClassifiersList = evoParamsList map createKMIClassifier
+  
+  def runClassify(classifier: UnsupervisedSpectralClassifier) = {
+    val t0 = System.nanoTime
+    val classification = classifier.classify(hdfImgCropped)
+    val t1 = System.nanoTime
+    
+    val p = classifier.params
+    val paramsString = p.populationSize + "-" + p.crossoverPercentage + "-" + p.mutationProbability
+    println(s"classification with params " + paramsString + " took ~${(t1 - t0) / 1000000} ms")
+    
+    println("saving classification as PNG")
+    classification.saveAsPng("resources/output/hdfImgCropped_classif-" + paramsString + ".png")
   }
-
-  object KMIClassifier
-    extends UnsupervisedSpectralClassifier(Params, 6, 0.1)
-    with XBI
-    with SelectionOperators.RouletteWheel
-    with CrossoverOperators.OnePointCrossover
-  {}
-
-  val t0 = System.nanoTime
-  val classification = KMIClassifier.classify(hdfImgCropped)
-  val t1 = System.nanoTime
-
-  println(s"classification took ~${(t1 - t0) / 1000000} ms")
-
-  println("saving classification as PNG")
-  classification.saveAsPng("resources/output/hdfImgCropped_classif.png")
-
+  KMIClassifiersList map runClassify
 }
