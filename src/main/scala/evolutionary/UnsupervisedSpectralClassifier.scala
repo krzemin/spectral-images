@@ -77,7 +77,8 @@ abstract class UnsupervisedSpectralClassifier(
                                                                         "-1"})).mkString(";")
     println("best individual: [" + bestIndividualString + "]")
 
-    val classes = bestIndividual.count(_.isDefined)
+    val relevantClusters = bestIndividual.filter(_.isDefined)
+    val classes: Int = relevantClusters.size
     println(s"total number of classes: $classes")
 
     new ImageClassification {
@@ -86,19 +87,14 @@ abstract class UnsupervisedSpectralClassifier(
       val image: SpectralImage = img
 
       def determine(x: Int, y: Int): ClassificationValue =
-        determineCluster(x, y, image, bestIndividual)
+        determineCluster(x, y, image, relevantClusters)
 
-      def renderAsRGBInt(value: ClassificationValue): Int = value match {
-        case 0 => Color.GREEN.getRGB
-        case 1 => Color.YELLOW.getRGB
-        case 2 => Color.BLUE.getRGB
-        case 3 => Color.PINK.getRGB
-        case 4 => Color.GRAY.getRGB
-        case 5 => Color.ORANGE.getRGB
-        case 6 => Color.MAGENTA.getRGB
-        case 7 => Color.BLACK.getRGB
-        case v => v * Color.RED.getRGB / maxK
-      }
+      val colorBuffer: Array[Int] =
+        (0 until relevantClusters.size)
+          .map(v => new Color((classes - v) * 255 / classes, 0, 0).getRGB)
+          .toArray
+
+      def renderAsRGBInt(value: ClassificationValue): Int = colorBuffer(value)
     }
   }
 }
