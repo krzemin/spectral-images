@@ -39,12 +39,12 @@ object Main extends App {
   val popSizes = List(30, 60, 100)
   val coPrecentages = List(0.4, 0.6, 0.8)
   val mutProbs = List(0.05, 0.25, 0.5)
-  def createEvolutionParams(params: ((Int,Double),Double)) = 
+  def createEvolutionParams(params: (Int,Double,Double)) = 
                 new EvolutionaryParameters {
-                    val populationSize: Int = params._1._1 // must be even to proper crossover
-                    val maxIterations: Int = 10
-                    val crossoverPercentage: Double = params._1._2
-                    val mutationProbability: Double = params._2
+                    val populationSize: Int = params._1 // must be even to proper crossover
+                    val maxIterations: Int = 100
+                    val crossoverPercentage: Double = params._2
+                    val mutationProbability: Double = params._3
                 }
   def createKMIClassifier(params: EvolutionaryParameters) =
                 new UnsupervisedSpectralClassifier(params, 6, 0.1)
@@ -52,7 +52,9 @@ object Main extends App {
                     with SelectionOperators.RouletteWheel
                     with CrossoverOperators.OnePointCrossover
                 {}
-  val evoParamsList = popSizes zip coPrecentages zip mutProbs map createEvolutionParams
+  val evoParamsList = (for { a <- popSizes;
+                             b <- coPrecentages;
+                             c <- mutProbs} yield (a, b, c)) map createEvolutionParams
   val KMIClassifiersList = evoParamsList map createKMIClassifier
   
   def runClassify(classifier: UnsupervisedSpectralClassifier) = {

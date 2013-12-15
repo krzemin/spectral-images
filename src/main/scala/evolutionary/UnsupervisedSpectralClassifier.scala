@@ -70,6 +70,12 @@ abstract class UnsupervisedSpectralClassifier(
     val finalPopulation: EvolutionaryAlgorithm#Population = algorithm.runEvolution()
     val finalPopulationPar = scala.collection.parallel.mutable.ParArray.fromTraversables(finalPopulation)
     val bestIndividual = finalPopulationPar.maxBy(fitness(image))
+    val bestIndividualString = (bestIndividual map (gene => gene match {
+                                                                    case Some(a) =>
+                                                                        "(" + (a map (x => x.toInt.toString)).mkString(",") + ")"
+                                                                    case None =>
+                                                                        "-1"})).mkString(";")
+    println("best individual: [" + bestIndividualString + "]")
 
     val classes = bestIndividual.count(_.isDefined)
     println(s"total number of classes: $classes")
