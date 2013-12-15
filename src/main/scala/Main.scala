@@ -32,7 +32,7 @@ object Main extends App {
 //  hdfImg.saveAsPng("resources/output/hdfImg.png", (1,3,4))
 
   println("cropping image...")
-  val hdfImgCropped = new CroppedSpectralImage(hdfImg, 1000, 1000, 2000, 1500)
+  val hdfImgCropped = new CroppedSpectralImage(hdfImg, 400, 400, 2000, 1500)
   hdfImgCropped.saveAsPng("resources/output/hdfImgCropped.png", (1,3,4))
 
 
@@ -42,14 +42,14 @@ object Main extends App {
 
   object Params extends EvolutionaryParameters {
     val populationSize: Int = 20 // must be even to proper crossover
-    val maxIterations: Int = 5
+    val maxIterations: Int = 10
     val crossoverPercentage: Double = 0.1
     val mutationProbability: Double = 0.05
   }
 
   object KMIClassifier
-    extends UnsupervisedSpectralClassifier(Params, 6, 0.2)
-    with KMI
+    extends UnsupervisedSpectralClassifier(Params, 6, 0.1)
+    with XBI
     with SelectionOperators.RouletteWheel
     with CrossoverOperators.OnePointCrossover
   {}

@@ -14,7 +14,7 @@ trait SelectionOperator {
 object SelectionOperators {
 
   private def calculateDistribution(items: Array[Double]): Array[Double] = {
-    val buffer: ArraySeq[Double] = mutable.ArraySeq.fill(items.size)(0)
+    val buffer: mutable.ArraySeq[Double] = mutable.ArraySeq.fill(items.size)(0)
     buffer(0) = items.head
     for(i <- 1 until items.size) {
       buffer(i) = buffer(i - 1) + items(i)
@@ -29,20 +29,14 @@ object SelectionOperators {
       val gradesDistribution: Array[Double] = calculateDistribution(grades)
 
       def randomIndividual: EvolutionaryAlgorithm#Individual = {
-        // TODO: improve performance with binary search algorithm
+        // TODO: improve performance with binary search algorithm; but is it really important if we are parallel?
         val r = rand.nextDouble() * gradesDistribution.last
-
-//        val idx = java.util.Arrays.binarySearch(
-//          gradesDistribution, 0, grades.size - 1, new java.util.Comparator[Double] {
-//            def compare(p1: Double, p2: Double): Int = p1.compareTo(r)
-//          })
-
         var idx = 0
         while (gradesDistribution(idx) < r) { idx += 1 }
         population(idx)
       }
 
-      ((1 to population.size).par.map (_ => randomIndividual)).toArray
+      (1 to population.size).par.map (_ => randomIndividual).toArray
     }
   }
 

@@ -7,18 +7,14 @@ trait KMI extends ClusterDetermination {
   def fitness(image: SpectralImage)(individual: EvolutionaryAlgorithm#Individual): Double = {
     var ret: Double = 0.0
     for (x <- 0 until image.width;
-         y <- 0 until image.height) {
-      val tmp = individual(determineCluster(x, y, image, individual))
-      if (tmp.isEmpty) {
-        return 0.0;
-      } else {
-        var d = 0.0
-        for (dim <- 0 until image.depth) {
-          val t = image.pixelAt(x, y, dim) - tmp.get(dim)
-          d += t * t
-        }
-        ret += sqrt(d)
+         y <- 0 until image.height;
+         tmp = individual(determineCluster(x, y, image, individual))) {
+      var d = 0.0
+      for (dim <- 0 until image.depth) {
+        val t = image.pixelAt(x, y, dim) - tmp.get(dim)
+        d += t * t
       }
+      ret += sqrt(d)
     }
     1 / ret
   }
@@ -27,23 +23,17 @@ trait KMI extends ClusterDetermination {
 trait XBI extends KMI {
   override def fitness(image: SpectralImage)(individual: EvolutionaryAlgorithm#Individual): Double = {
     var min: Double = Double.MaxValue
-    var id: Int = 0
-    for (cluster <- individual) {
-      for (other <- individual) {
-        if (other != cluster && other.isDefined && cluster.isDefined) {
-          var d = 0.0
-          for (dim <- 0 until image.depth) {
-            val t = other.get(dim) - cluster.get(dim)
-            d += t * t
-          }
-          min = if (min > d) {
-            d
-          } else {
-            min
-          }
-        }
-      }
+    for (cluster <- individual;
+         other <- individual
+         if other != cluster && other.isDefined && cluster.isDefined
+    ) {
+      val d = (0 until image.depth)
+        .map(dim => other.get(dim) - cluster.get(dim))
+        .map(v => v * v)
+        .sum
+      min = math.min(min, d)
     }
+
     super.fitness(image)(individual) * image.height * image.width * min
   }
 }
