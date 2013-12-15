@@ -9,8 +9,8 @@ trait KMI extends ClusterDetermination {
     var ret: Double = 0.0
     for (x <- 0 until image.width;
          y <- 0 until image.height;
-         cluster = individual(determineCluster(x, y, image, individual));
-         if cluster.isDefined) {
+         cluster = individual(determineCluster(x, y, image, individual))) {
+      if (cluster.isEmpty) return 0.0
       var d = 0.0
       for (dim <- 0 until image.depth) {
         val t = image.pixelAt(x, y, dim) - cluster.get(dim)
