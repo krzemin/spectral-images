@@ -1,34 +1,33 @@
 import evolutionary._
 import spectral.{CroppedSpectralImage, RawMultibandlImageReader}
 
-
-
 object EvaluationTest extends App {
 
-  val outputPrefix = "resources/output/evaluation-"
+  val outputPrefix = "resources/output/evaluation/kmi/classification-"
 
   val hdfImgFiles = List(
-    "L71045025_02520000716_B10.L1G"
-    ,"L71045025_02520000716_B20.L1G"
-    ,"L71045025_02520000716_B30.L1G"
-    ,"L71045025_02520000716_B40.L1G"
-    ,"L71045025_02520000716_B50.L1G"
-  ) map ("resources/input/L71045025_02520000716/" + _)
-  val (width, height) = (6454, 6002)
+    "L71011026_02620020622_B10",
+    "L71011026_02620020622_B20",
+    "L71011026_02620020622_B30",
+    "L71011026_02620020622_B40",
+    "L71011026_02620020622_B50",
+    "L72011026_02620020622_B70"
+  ) map ("resources/input/L71011026_02620020622/" + _ + ".L1G")
+  val (width, height) = (6464, 6000)
 
   val img = RawMultibandlImageReader.readImage(width, height, hdfImgFiles)
-  val imgCropped = new CroppedSpectralImage(img, 1000, 1000, 200, 2500)
+  val imgCropped = new CroppedSpectralImage(img, 800, 600, 2000, 3000)
 
-  imgCropped.saveAsPng(outputPrefix ++ "image.png", (2,1,0))
+  imgCropped.saveAsPng(outputPrefix ++ "image.png", (5,4,3))
 
   def runEvolutionaryClassification(iterations: Int,
                                     maxClusters: Int,
                                     probabilityOfEmptyCluster: Double): Unit = {
     object Params extends EvolutionaryParameters {
-      val populationSize: Int = 20
+      val populationSize: Int = 50
       val maxIterations: Int = iterations
       val crossoverPercentage: Double = 0.4
-      val mutationProbability: Double = 0.05
+      val mutationProbability: Double = 0.1
     }
 
     val classifier = new UnsupervisedSpectralClassifier(
@@ -41,12 +40,12 @@ object EvaluationTest extends App {
 
     val classification = classifier.classify(imgCropped)
 
-    val description = s"-it${iterations}-pop${Params.populationSize}-cx${Params.crossoverPercentage}-mut${Params.mutationProbability}"
+    val description = s"it${iterations}-pop${Params.populationSize}-cx${Params.crossoverPercentage}-mut${Params.mutationProbability}"
     classification.saveAsPng(outputPrefix ++ description ++ ".png")
   }
 
-  for(n <- 5 to 50 by 5) {
+  for(n <- 60 to 200 by 20) {
     println(s"running classification with $n iterations")
-    runEvolutionaryClassification(n, 4, 0.3)
+    runEvolutionaryClassification(n, 2, 0.0)
   }
 }
