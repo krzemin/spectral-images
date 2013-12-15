@@ -15,13 +15,12 @@ object RawMultibandlImageReader {
       bytes
     }
 
-    val buffer: Map[Int, Array[SpectralImage#Illumination]] = bandFileList.zipWithIndex.map {
-      case (bandFile, idx) => idx -> readBinaryFile(bandFile)
-    }.toMap
+    val buffer: Array[Array[SpectralImage#Illumination]] =
+      bandFileList.map(readBinaryFile).toArray
 
     new SpectralImage {
-      def pixelAt(x: Int, y: Int, lambda: Spectrum): Illumination =
-        buffer(lambda)(y * w + x)
+      def pixelAt(x: Int, y: Int, band: Spectrum): Illumination =
+        buffer(band)(y * w + x)
 
       def height: Int = h
 

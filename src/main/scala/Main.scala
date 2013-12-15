@@ -24,8 +24,8 @@ object Main extends App {
   println("reading bands...")
   val hdfImg = RawMultibandlImageReader.readImage(width, height, hdfImgFiles)
 
-//  println("writing PNG...")
-//  hdfImg.saveAsPng("resources/output/hdfImg.png", (1,3,4))
+  println("writing PNG...")
+  hdfImg.saveAsPng("resources/output/hdfImg.png", (1,3,4))
 
   println("cropping image...")
   val hdfImgCropped = new CroppedSpectralImage(hdfImg, 400, 400, 2000, 1500)
@@ -52,8 +52,8 @@ object Main extends App {
                     with SelectionOperators.RouletteWheel
                     with CrossoverOperators.OnePointCrossover
                 {}
-  val evoParamsList = (for { a <- popSizes;
-                             b <- coPrecentages;
+  val evoParamsList = (for { a <- popSizes
+                             b <- coPrecentages
                              c <- mutProbs} yield (a, b, c)) map createEvolutionParams
   val KMIClassifiersList = evoParamsList map createKMIClassifier
   
@@ -64,7 +64,7 @@ object Main extends App {
     
     val p = classifier.params
     val paramsString = p.populationSize + "-" + p.crossoverPercentage + "-" + p.mutationProbability
-    println(s"classification with params " + paramsString + " took ~${(t1 - t0) / 1000000} ms")
+    println("classification with params " + paramsString + s" took ~${(t1 - t0) / 1000000} ms")
     
     println("saving classification as PNG")
     classification.saveAsPng("resources/output/hdfImgCropped_classif-" + paramsString + ".png")
