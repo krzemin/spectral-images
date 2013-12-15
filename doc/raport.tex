@@ -136,12 +136,6 @@ We'll try each of this functions and see if there is one strictly better then th
 
 First thing we should do when trying to determine if our algorithm is good is methods convergence. To determine if and how fast is our method convergent we conducted simple test by running our program on small multi-spectral image and compared its output with hand-made classification of those data. Following figure shows compliance percentage of those two images.
 
-\begin{center}
-\begin{figure}
-
-\end{figure}
-\end{center}
-
 % Further blabling about the figure goes here
 
 \subsection{Tuning parameters}
@@ -150,42 +144,53 @@ One of our main concerns was tuning the parameters of the algorithm. Not only do
 
 First of all we conducted experiments, that showed, that mutation and crossover probability values equal $0.7$ and $0.05$ respectively were giving good results to conduct further experiments.
 
-Let's first understand why tuning length of the chromosome and probability of \texttt{None} (called also \textit{PN}) is important. During our experiments we have started with values 6 and 0.1 for those factors respectively. We have noticed that our population contained many individuals with none or very small amount of 'no centroid' genes. It's going to be a problem when we have simple image which contains not so many clusters. On the other hand, if we set PN to be high (like 0.6) we can loose some existing centroids in favor of \texttt{None}s (situation presented in the following figure).
+Let's first understand why tuning length of the chromosome and probability of \texttt{None} (called also \textit{PN}) is important. During our experiments we have started with values 6 and 0.1 for those factors respectively. We have noticed that our population contained many individuals with none or very small amount of 'no centroid' genes. It's going to be a problem when we have simple image which contains not so many clusters. On the other hand, if we set PN to be high (like 0.6) we can loose some existing centroids in favor of \texttt{None}s (situation presented in Figure 1).
 
-\begin{center}
-\begin{figure}
-
+\begin{figure}[h]
+\includegraphics[scale=0.2]{none_prob.png}
+\caption{Effects of bad \textit{PN} tuning}
 \end{figure}
-\end{center}
 
-Our experiments showed that $PN$ value of ... gives most accurate results. We also suggest to set $K_{max}$ to value $\approx 12$ as we believe it is easier to merge clusters afterwards than to extract clusters that were unified by the algorithm.
+Our experiments showed that $PN$ value of $\approx 0.25$ gives most accurate results. We also suggest to set $K_{max}$ to value $\approx 12$ as we believe it is easier to merge clusters afterwards than to extract clusters that were unified by the algorithm.
 
 \subsection{Final results}
 
-After tuning parameters we can finally present results of our algorithm. First let's take a look at one of the original pictures we used to test the outcome.
+After tuning parameters we can finally present results of our algorithm. First we can take a look at one of the original pictures we used to test the outcome at figure 2.
 
-\begin{center}
 \begin{figure}
-
-\end{figure}
-\end{center}
-
-Following table shows the pictures that were the output of algorithm for different indexes and population sizes.
-
 \begin{center}
-\begin{figure}
-
-\end{figure}
+\includegraphics[scale=0.4]{testImage2.png}
+\caption{Original picture (bands 1-3 on RGB)}
 \end{center}
+\end{figure}
 
-% Wnioski z obrazków
 
-Finally it's important to measure the error between results and original image. It was done by manually classifying the original picture and then constructing \textit{error matrix}. Error percentage is shown in the table:
+Figure 3 shows the pictures that were the output of algorithm for different indexes and population sizes. The reason that colours of the clusters differ from picture to picture is they were picked by our program depending on the number of clusters in best individual - if different number of clusters was computed, number of colors was picked to ensure all of them are going to be visible.
 
-\begin{table}
+
+\begin{figure}[h]
+\includegraphics[scale=0.133]{all.png}
+\caption{Results of algorithm}
+\end{figure}
+
+Surprisingly best results were obtained with KMI, which at the same time is easiest to compute. It may be matter of the image, but we was expecting to obtain better outcome with XBI and DBI. We can see, that XBI not only gives worst results but also increasing population size doesn't make results any better. For DBI in turn we get much worse classification with 32 individuals than with population size 16. We can see as well that for population size 8 all indexes give similar results and two latter indexes tend to promote higher number of clusters. Let's also note that for population of size 64 there was no significant improvement.
+
+Finally it's important to measure the error between results and original image. It was done by manually classifying the original picture and then constructing \textit{error matrix}. Error percentage is shown in the table 1.
+
+\begin{table}[h]
+\begin{center}
 \begin{tabular}{l|c|c|c|}
-
+\textbf{Index}& \textbf{16 individuals} & \textbf{32 individuals} & \textbf{64 individuals} \\
+\hline
+KMI & 40.4\% & 78.1\% & 86.3\% \\
+\hline
+XBI & 34.7\% & 38.0\% & 42.5\% \\
+\hline
+DBI & 36.2\% & 76.9\% & 49.1\% \\
+\hline
 \end{tabular}
+\caption{Error values for different fitness functions}
+\end{center}
 \end{table}
 
 \end{document} 
